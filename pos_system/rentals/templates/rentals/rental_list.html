@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block header %}Rental Management{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Active Rentals</h5>
+        <a href="{% url 'rental_add' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> New Rental</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Date Out</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rental in rentals %}
+                    <tr>
+                        <td>{{ rental.id }}</td>
+                        <td>{{ rental.customer_name }}</td>
+                        <td>{{ rental.rental_timestamp|date:"M d, Y" }}</td>
+                        <td>{{ rental.due_date|date:"M d, Y" }}</td>
+                        <td>
+                            {% if rental.status == 'ACTIVE' %}
+                            <span class="badge bg-primary">Active</span>
+                            {% elif rental.status == 'OVERDUE' %}
+                            <span class="badge bg-danger">Overdue</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Returned</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'rental_edit' rental.pk %}"
+                                class="btn btn-sm btn-outline-success">Update</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">No active rentals found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block header %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Net Revenue</h5>
+                <h2 class="display-6">${{ daily_revenue|floatformat:2 }}</h2>
+                <p class="card-text mb-0">for {% now "M d, Y" %}</p>
+                <small>Includes -${{ daily_returns_amount|floatformat:2 }} returns</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Transactions</h5>
+                <h2 class="display-6">{{ daily_transactions }}</h2>
+                <p class="card-text mb-0">Sales & Returns</p>
+                <small>{{ returns_count }} returns processed</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-dark">
+            <div class="card-body">
+                <h5 class="card-title">Low Stock</h5>
+                <h2 class="display-6">{{ low_stock_count }}</h2>
+                <p class="card-text">Items need reordering</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">Active Rentals</h5>
+                <h2 class="display-6">{{ active_rentals }}</h2>
+                <p class="card-text">Items currently out</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Recent Sales</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sale in recent_sales %}
+                        <tr>
+                            <td>#{{ sale.id }}</td>
+                            <td>{{ sale.sale_timestamp|date:"H:i" }}</td>
+                            <td>
+                                {% if sale.status == 'COMPLETED' %}
+                                <span class="badge bg-success">Completed</span>
+                                {% else %}
+                                <span class="badge bg-warning text-dark">{{ sale.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>${{ sale.total }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No recent activity</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'pos' %}" class="btn btn-primary btn-lg"><i class="bi bi-cart-plus"></i> New
+                        Sale</a>
+                    <a href="{% url 'return_add' %}" class="btn btn-outline-secondary"><i
+                            class="bi bi-arrow-counterclockwise"></i> Process Return</a>
+                    <a href="{% url 'rental_add' %}" class="btn btn-outline-secondary"><i class="bi bi-clock"></i> New
+                        Rental</a>
+                    <a href="{% url 'inventory_list' %}" class="btn btn-outline-info"><i class="bi bi-box-seam"></i>
+                        Check Inventory</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
